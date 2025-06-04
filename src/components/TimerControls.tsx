@@ -5,8 +5,6 @@ interface TimerControlsProps {
   onPause: () => void;
   onResume: () => void;
   onReset: () => void;
-  onFullscreen?: () => void;
-  isFullscreen?: boolean;
 }
 
 export function TimerControls({
@@ -16,8 +14,6 @@ export function TimerControls({
   onPause,
   onResume,
   onReset,
-  onFullscreen,
-  isFullscreen = false,
 }: TimerControlsProps) {
   return (
     <div className="space-y-4">
@@ -60,58 +56,43 @@ export function TimerControls({
         >
           🔄 リセット
         </button>
-
-        {/* 全画面ボタン */}
-        {onFullscreen && (
-          <button
-            type="button"
-            onClick={onFullscreen}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-8 rounded-lg transition-colors text-lg"
-            title="全画面表示 (F11)"
-          >
-            {isFullscreen ? "🪟 ウィンドウ" : "📺 プレゼンモード"}
-          </button>
-        )}
       </div>
 
       {/* キーボードショートカットヘルプ */}
-      {!isFullscreen && (
-        <div className="text-center">
-          <details className="inline-block">
-            <summary className="cursor-pointer text-sm text-gray-600 hover:text-gray-800">
-              ⌨️ キーボードショートカット
-            </summary>
-            <div className="mt-2 p-3 bg-white rounded-lg shadow-sm text-sm text-gray-700">
-              <div className="grid grid-cols-2 gap-2 text-left">
-                <div>
-                  <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">
-                    Space/Enter
-                  </kbd>{" "}
-                  スタート/一時停止
-                </div>
-                <div>
-                  <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">
-                    P
-                  </kbd>{" "}
-                  一時停止
-                </div>
-                <div>
-                  <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">
-                    Esc
-                  </kbd>{" "}
-                  リセット
-                </div>
-                <div>
-                  <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">
-                    F11
-                  </kbd>{" "}
-                  全画面切り替え
-                </div>
+
+      <div className="text-center">
+        <details className="inline-block">
+          <summary className="cursor-pointer text-sm text-gray-600 hover:text-gray-800">
+            ⌨️ キーボードショートカット
+          </summary>
+          <div className="mt-2 p-3 bg-white rounded-lg shadow-sm text-sm text-gray-700">
+            <div className="grid grid-cols-2 gap-2 text-left">
+              <div>
+                <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">
+                  Space/Enter
+                </kbd>{" "}
+                スタート/一時停止
+              </div>
+              <div>
+                <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">P</kbd>{" "}
+                一時停止
+              </div>
+              <div>
+                <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">
+                  Esc
+                </kbd>{" "}
+                リセット
+              </div>
+              <div>
+                <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">
+                  F11
+                </kbd>{" "}
+                全画面切り替え
               </div>
             </div>
-          </details>
-        </div>
-      )}
+          </div>
+        </details>
+      </div>
     </div>
   );
 }

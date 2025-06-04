@@ -4,7 +4,6 @@ export interface KeyboardShortcuts {
   onStart?: () => void;
   onPause?: () => void;
   onReset?: () => void;
-  onFullscreen?: () => void;
 }
 
 export function useKeyboardShortcuts(shortcuts: KeyboardShortcuts) {
@@ -23,14 +22,6 @@ export function useKeyboardShortcuts(shortcuts: KeyboardShortcuts) {
         event.preventDefault();
         if (shortcuts.onReset) {
           shortcuts.onReset();
-        }
-      }
-
-      // F11キーで全画面切り替え
-      if (event.code === "F11") {
-        event.preventDefault();
-        if (shortcuts.onFullscreen) {
-          shortcuts.onFullscreen();
         }
       }
 
