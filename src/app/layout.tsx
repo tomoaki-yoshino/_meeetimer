@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Meeetimer - プレゼンテーション時間管理ツール",
-  description: "プレゼンテーション時間を効率的に管理するタイマーアプリ。最大3回までアラートを設定可能。",
+  description:
+    "プレゼンテーション時間を効率的に管理するタイマーアプリ。最大3回までアラートを設定可能。",
 };
 
 export default function RootLayout({

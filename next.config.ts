@@ -4,10 +4,10 @@ const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,
   images: {
-    unoptimized: true
+    unoptimized: true,
   },
   basePath: process.env.NODE_ENV === "production" ? "/meeetimer" : "",
-  assetPrefix: process.env.NODE_ENV === "production" ? "/meeetimer/" : ""
+  assetPrefix: process.env.NODE_ENV === "production" ? "/meeetimer/" : "",
 };
 
 export default nextConfig;
