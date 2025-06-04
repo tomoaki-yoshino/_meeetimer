@@ -116,12 +116,6 @@ src/
 3. GitHub ActionsでCI/CDが自動実行
 4. GitHub Pagesで公開
 
-### 他のプラットフォーム
-
-- **Vercel**: `vercel deploy`
-- **Netlify**: ビルドコマンド `npm run build`
-- **AWS S3**: `out/` フォルダをアップロード
-
 ## 🤝 コントリビューション
 
 1. このリポジトリをフォーク
@@ -139,6 +133,9 @@ src/
 - [Next.js](https://nextjs.org/) - 素晴らしいReactフレームワーク
 - [Tailwind CSS](https://tailwindcss.com/) - ユーティリティファーストCSS
 - [Biome](https://biomejs.dev/) - 高速なlinter/formatter
+
+## クレジット
+- 使用した音素材：OtoLogic(https://otologic.jp)
 
 ---
 
