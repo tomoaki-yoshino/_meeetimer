@@ -1,6 +1,6 @@
 "use client";
 
-import { TimeInput } from "@/components/TimeInput";
+import { TimeSettings } from "@/components/TimeSettings";
 import { TimerControls } from "@/components/TimerControls";
 import { TimerDisplay } from "@/components/TimerDisplay";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -77,7 +77,10 @@ export default function Home() {
               onResume={timer.resume}
               onReset={handleReset}
             />
-            <TimeInput onTimeSet={handleTimeSet} disabled={timer.isRunning} />
+            <TimeSettings
+              onTimeSet={handleTimeSet}
+              disabled={timer.isRunning}
+            />
           </>
         </main>
 
