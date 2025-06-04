@@ -1,36 +1,145 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎯 Meeetimer
 
-## Getting Started
+プレゼンテーション時間管理ツール - 時間Overを防止するためのタイマーアプリケーション
 
-First, run the development server:
+## 🌟 特徴
+
+- **最大3回のアラート通知**: 設定した残り時間でアラート音とビジュアル通知
+- **プレゼンモード**: 全画面表示でプレゼンテーション中に最適化
+- **キーボードショートカット**: スペースキーやF11キーで素早い操作
+- **設定の永続化**: 前回の設定を自動的に保存
+- **レスポンシブデザイン**: デスクトップとモバイルの両方に対応
+- **視覚的フィードバック**: 進捗に応じた色分け表示
+
+## 🚀 使用方法
+
+### 基本操作
+
+1. **時間設定**: プリセット時間を選択するか、時間と分を手動で入力
+2. **アラート設定**: 最大3回のアラートタイミングを設定（例：残り10分、5分、1分）
+3. **タイマー開始**: 「タイマーを設定」ボタンでタイマーモードに移行
+4. **操作**: スタート/一時停止/リセット/全画面モードの切り替え
+
+### キーボードショートカット
+
+| キー | 機能 |
+|------|------|
+| `Space` / `Enter` | スタート/一時停止の切り替え |
+| `P` | 一時停止 |
+| `Esc` | リセット（設定画面に戻る） |
+| `F11` | 全画面モードの切り替え |
+
+### プレゼンモード
+
+- 全画面表示で最大限の視認性
+- ダークテーマで集中力を向上
+- 不要な情報を非表示にしてシンプルな表示
+
+## 🛠️ 技術スタック
+
+- **Next.js 15**: React フレームワーク
+- **TypeScript**: 型安全性の確保
+- **Tailwind CSS**: スタイリング
+- **Biome**: リンター・フォーマッター
+- **Web Audio API**: アラート音の再生
+
+## 📦 セットアップ
+
+### 必要条件
+
+- Node.js 20以上
+- npm または yarn
+
+### インストール
 
 ```bash
+# リポジトリのクローン
+git clone https://github.com/your-username/meeetimer.git
+cd meeetimer
+
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### ビルドとデプロイ
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# プロダクションビルド
+npm run build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 静的エクスポート（GitHub Pages用）
+npm run export
+```
 
-## Learn More
+## 🔧 開発
 
-To learn more about Next.js, take a look at the following resources:
+### スクリプト
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev          # 開発サーバー起動
+npm run build        # プロダクションビルド
+npm run start        # プロダクションサーバー起動
+npm run lint         # Biome linting
+npm run format       # Biome formatting
+npm run check        # Biome check（lint + format）
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### プロジェクト構造
 
-## Deploy on Vercel
+```
+src/
+├── app/              # Next.js App Router
+│   ├── layout.tsx    # レイアウトコンポーネント
+│   └── page.tsx      # メインページ
+├── components/       # UIコンポーネント
+│   ├── TimerDisplay.tsx    # タイマー表示
+│   ├── TimeInput.tsx       # 時間入力フォーム
+│   └── TimerControls.tsx   # コントロールボタン
+└── hooks/           # カスタムフック
+    ├── useTimer.ts          # タイマーロジック
+    ├── useFullscreen.ts     # 全画面制御
+    ├── useKeyboardShortcuts.ts  # キーボード操作
+    └── useLocalStorage.ts   # 設定永続化
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🌐 デプロイ
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### GitHub Pages
+
+このプロジェクトはGitHub Pagesでの静的ホスティングに対応しています。
+
+1. GitHub上でリポジトリを作成
+2. コードをpush
+3. GitHub ActionsでCI/CDが自動実行
+4. GitHub Pagesで公開
+
+### 他のプラットフォーム
+
+- **Vercel**: `vercel deploy`
+- **Netlify**: ビルドコマンド `npm run build`
+- **AWS S3**: `out/` フォルダをアップロード
+
+## 🤝 コントリビューション
+
+1. このリポジトリをフォーク
+2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. Pull Requestを作成
+
+## 📄 ライセンス
+
+このプロジェクトはMITライセンスの下で公開されています。
+
+## 🙏 謝辞
+
+- [Next.js](https://nextjs.org/) - 素晴らしいReactフレームワーク
+- [Tailwind CSS](https://tailwindcss.com/) - ユーティリティファーストCSS
+- [Biome](https://biomejs.dev/) - 高速なlinter/formatter
+
+---
+
+**Meeetimer** で、あなたのプレゼンテーションを時間通りに成功させましょう！🎯
