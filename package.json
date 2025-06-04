@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "biome lint src/",
     "format": "biome format src/ --write",
+    "format:check": "biome format src/",
     "check": "biome check src/",
     "export": "next build",
     "deploy": "npm run export && touch out/.nojekyll"
