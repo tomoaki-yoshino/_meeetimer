@@ -6,10 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "biome lint src/",
+    "lint": "biome lint --apply src/",
     "format": "biome format src/ --write",
-    "format:check": "biome format src/",
-    "check": "biome check src/",
+    "check": "biome check --write src/",
+    "type-check": "tsc --noEmit",
     "export": "next build",
     "deploy": "npm run export && touch out/.nojekyll"
   },
@@ -24,6 +24,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "lefthook": "^1.11.13",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
