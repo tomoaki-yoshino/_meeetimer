@@ -38,7 +38,7 @@ export function useTimer(settings: TimerSettings) {
           // アラートチェック
           const newAlertsTriggered = new Set(prev.alertsTriggered);
 
-          for (const alertMinute of settings.alerts) {
+          for (const [index, alertMinute] of settings.alerts.entries()) {
             if (
               remainingSeconds <= alertMinute &&
               !prev.alertsTriggered.has(alertMinute) &&
@@ -46,13 +46,31 @@ export function useTimer(settings: TimerSettings) {
             ) {
               newAlertsTriggered.add(alertMinute);
               // アラート音を鳴らす
-              playAlert();
+
+              let played = 0;
+              const playNext = () => {
+                if (played > index) return;
+                playAlert();
+                played++;
+
+                setTimeout(playNext, 500);
+              };
+              playNext(); // 最初の再生
             }
           }
 
           // タイマー終了チェック
           if (remainingSeconds === 0) {
-            playAlert();
+            let played = 0;
+            const playNext = () => {
+              if (played > settings.alerts.length) return;
+              playAlert();
+              played++;
+
+              setTimeout(playNext, 500);
+            };
+            playNext(); // 最初の再生
+            playAlertLast();
             return {
               ...prev,
               isRunning: false,
@@ -111,28 +129,22 @@ export function useTimer(settings: TimerSettings) {
 }
 
 function playAlert() {
-  // Web Audio APIを使用してアラート音を再生
   try {
-    const audioContext = new (
-      window.AudioContext || (window as any).webkitAudioContext
-    )();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    const audio = new Audio("/audio/Onoma-Ding04-2(Short).mp3");
+    audio.play();
+  } catch (error) {
+    console.warn("Audio playback failed:", error);
+    // フォールバック: システムビープ音
+    if (typeof window !== "undefined" && window.navigator.vibrate) {
+      window.navigator.vibrate(200);
+    }
+  }
+}
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.type = "sine";
-
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(
-      0.01,
-      audioContext.currentTime + 0.5
-    );
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.5);
+function playAlertLast() {
+  try {
+    const audio = new Audio("/audio/Onoma-Ding04-1(Long).mp3");
+    audio.play();
   } catch (error) {
     console.warn("Audio playback failed:", error);
     // フォールバック: システムビープ音

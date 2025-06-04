@@ -140,6 +140,7 @@ export function TimeSettings({
           onRemoveAlert={removeAlert}
           onUpdateAlert={updateAlert}
           maxTime={minutes * 60 + seconds}
+          disabled={disabled}
         />
 
         {/* プリセットボタン */}

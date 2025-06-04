@@ -7,6 +7,7 @@ interface AlertConfigProps {
   onRemoveAlert: (time: number) => void;
   onUpdateAlert: (time: number, newTime: number) => void;
   maxTime: number;
+  disabled: boolean;
 }
 
 const AlertConfig: React.FC<AlertConfigProps> = ({
@@ -15,6 +16,7 @@ const AlertConfig: React.FC<AlertConfigProps> = ({
   onRemoveAlert,
   onUpdateAlert,
   maxTime,
+  disabled,
 }) => {
   const formatTimeFromSeconds = (seconds: number) => {
     const m = Math.floor((seconds % 3600) / 60);
@@ -82,6 +84,7 @@ const AlertConfig: React.FC<AlertConfigProps> = ({
                         onUpdateAlert(alertTime, newTime);
                       }
                     }}
+                    disabled={disabled}
                   />
                   <span className="text-ms text-gray-500">前</span>
                 </div>
@@ -90,6 +93,7 @@ const AlertConfig: React.FC<AlertConfigProps> = ({
                   onClick={() => onRemoveAlert(alertTime)}
                   className="text-gray-400 hover:text-red-500 transition-colors"
                   aria-label="Remove alert"
+                  disabled={disabled}
                 >
                   {/* <Trash2 size={16} /> */}✖
                 </button>
