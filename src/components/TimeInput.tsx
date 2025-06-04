@@ -42,13 +42,10 @@ export function TimeInput({ onTimeSet, disabled }: TimeInputProps) {
   };
 
   const presetTimes = [
-    { label: "5分", minutes: 5, seconds: 0 },
     { label: "10分", minutes: 10, seconds: 0 },
     { label: "15分", minutes: 15, seconds: 0 },
     { label: "20分", minutes: 20, seconds: 0 },
     { label: "30分", minutes: 30, seconds: 0 },
-    { label: "45分", minutes: 45, seconds: 0 },
-    { label: "60分", minutes: 60, seconds: 0 },
   ];
 
   const handlePresetClick = (presetMinutes: number, presetSeconds: number) => {
@@ -340,6 +337,7 @@ export function TimeInput({ onTimeSet, disabled }: TimeInputProps) {
         </div>
 
         {/* 設定ボタン */}
+        {/* TODO: 入力したタイミングで同期 */}
         <button
           type="submit"
           disabled={disabled || (minutes === 0 && seconds === 0)}

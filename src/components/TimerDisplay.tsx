@@ -3,7 +3,8 @@ interface TimerDisplayProps {
   totalSeconds: number;
   isRunning: boolean;
   isPaused: boolean;
-  isFullscreen?: boolean;
+  alerts: number[];
+  alertsTriggered: Set<number>;
 }
 
 export function TimerDisplay({
@@ -11,7 +12,8 @@ export function TimerDisplay({
   totalSeconds,
   isRunning,
   isPaused,
-  isFullscreen = false,
+  alerts,
+  alertsTriggered,
 }: TimerDisplayProps) {
   const formatTime = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
@@ -38,7 +40,6 @@ export function TimerDisplay({
   };
 
   const getBgColorClass = (): string => {
-    if (isFullscreen) return "bg-transparent";
     const percentage = getProgressPercentage();
     if (percentage >= 90) return "bg-red-100";
     if (percentage >= 75) return "bg-orange-100";
@@ -47,32 +48,17 @@ export function TimerDisplay({
   };
 
   const getTextColorClass = (): string => {
-    if (isFullscreen) {
-      const percentage = getProgressPercentage();
-      if (percentage >= 90) return "text-red-400";
-      if (percentage >= 75) return "text-orange-400";
-      if (percentage >= 50) return "text-yellow-400";
-      return "text-green-400";
-    }
     return getColorClass();
   };
 
   return (
     <div
-      className={`rounded-lg transition-colors duration-500 ${
-        isFullscreen ? "p-16" : "p-8"
-      } ${getBgColorClass()}`}
+      className={`rounded-lg transition-colors duration-500 px-8 py-6 ${getBgColorClass()}`}
     >
       {/* プログレスバー */}
-      <div
-        className={`w-full rounded-full transition-all duration-1000 ${
-          isFullscreen ? "bg-gray-800 h-8 mb-12" : "bg-gray-200 h-4 mb-6"
-        }`}
-      >
+      <div className="w-full rounded-full transition-all duration-1000 bg-gray-200 h-4 mb-6">
         <div
-          className={`rounded-full transition-all duration-1000 ${
-            isFullscreen ? "h-8" : "h-4"
-          } ${
+          className={`rounded-full transition-all duration-1000 h-4 ${
             getProgressPercentage() >= 90
               ? "bg-red-500"
               : getProgressPercentage() >= 75
@@ -87,66 +73,53 @@ export function TimerDisplay({
 
       {/* 時間表示 */}
       <div
-        className={`font-mono font-bold text-center transition-colors duration-500 ${
-          isFullscreen ? "text-9xl" : "text-8xl"
-        } ${getTextColorClass()}`}
+        className={`font-mono font-bold text-center transition-colors duration-500 text-8xl ${getTextColorClass()}`}
       >
         {formatTime(remainingSeconds)}
       </div>
 
       {/* ステータス表示 */}
-      <div
-        className={`text-center transition-all duration-300 ${
-          isFullscreen ? "mt-8" : "mt-4"
-        }`}
-      >
+      <div className="text-center transition-all duration-300 mt-4">
         {isPaused && (
-          <span
-            className={`inline-flex items-center px-3 py-1 rounded-full font-medium ${
-              isFullscreen
-                ? "text-lg bg-yellow-900 text-yellow-200"
-                : "text-sm bg-yellow-200 text-yellow-800"
-            }`}
-          >
+          <span className="inline-flex items-center px-3 py-1 rounded-full font-medium text-sm bg-yellow-200 text-yellow-800">
             一時停止中
           </span>
         )}
         {isRunning && !isPaused && (
-          <span
-            className={`inline-flex items-center px-3 py-1 rounded-full font-medium ${
-              isFullscreen
-                ? "text-lg bg-green-900 text-green-200"
-                : "text-sm bg-green-200 text-green-800"
-            }`}
-          >
+          <span className="inline-flex items-center px-3 py-1 rounded-full font-medium text-sm bg-green-200 text-green-800">
             実行中
           </span>
         )}
         {!isRunning && (
-          <span
-            className={`inline-flex items-center px-3 py-1 rounded-full font-medium ${
-              isFullscreen
-                ? "text-lg bg-gray-800 text-gray-200"
-                : "text-sm bg-gray-200 text-gray-800"
-            }`}
-          >
+          <span className="inline-flex items-center px-3 py-1 rounded-full font-medium text-sm bg-gray-200 text-gray-800">
             停止中
           </span>
         )}
       </div>
 
       {/* 残り時間の詳細情報 */}
-      {!isFullscreen && (
-        <div className="text-center mt-4 text-gray-600">
-          <p className="text-sm">
-            経過時間: {formatTime(totalSeconds - remainingSeconds)} / 総時間:{" "}
-            {formatTime(totalSeconds)}
-          </p>
-          <p className="text-sm mt-1">
-            進捗: {getProgressPercentage().toFixed(1)}%
-          </p>
-        </div>
-      )}
+      <div className="text-center mt-4 text-gray-600">
+        <p className="text-sm">
+          経過時間: {formatTime(totalSeconds - remainingSeconds)}
+        </p>
+      </div>
+
+      {/* TODO: バーに重ねて表示 */}
+      <h3 className="text-sm font-semibold mb-2 text-gray-800">アラート設定</h3>
+      <div className="flex flex-wrap gap-2">
+        {alerts.map((alert) => (
+          <span
+            key={alert}
+            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              alertsTriggered.has(alert)
+                ? "bg-red-200 text-red-800"
+                : "bg-blue-200 text-blue-800"
+            }`}
+          >
+            残り {alert} 分{alertsTriggered.has(alert) && " ✓"}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
