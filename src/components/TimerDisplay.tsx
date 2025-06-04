@@ -16,13 +16,9 @@ export function TimerDisplay({
   alertsTriggered,
 }: TimerDisplayProps) {
   const formatTime = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-    }
     return `${minutes}:${secs.toString().padStart(2, "0")}`;
   };
 
@@ -116,7 +112,7 @@ export function TimerDisplay({
                 : "bg-blue-200 text-blue-800"
             }`}
           >
-            残り {alert} 分{alertsTriggered.has(alert) && " ✓"}
+            残り {alert} 秒{alertsTriggered.has(alert) && " ✓"}
           </span>
         ))}
       </div>

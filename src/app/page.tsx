@@ -4,26 +4,30 @@ import { TimeSettings } from "@/components/TimeSettings";
 import { TimerControls } from "@/components/TimerControls";
 import { TimerDisplay } from "@/components/TimerDisplay";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { type TimerSettings, useTimer } from "@/hooks/useTimer";
+import { parseAsArrayOf, parseAsInteger, useQueryStates } from "nuqs";
 import { useState } from "react";
 
 export default function Home() {
-  const [savedSettings, setSavedSettings] = useLocalStorage<TimerSettings>(
-    "timerSettings",
-    {
-      totalMinutes: 20,
-      alerts: [10, 5, 1],
-    }
-  );
-  const [settings, setSettings] = useState<TimerSettings>(savedSettings);
+  const [queryState, setQueryState] = useQueryStates({
+    totalSeconds: parseAsInteger.withDefault(15 * 60),
+    alerts: parseAsArrayOf(parseAsInteger).withDefault([
+      10 * 60,
+      5 * 60,
+      1 * 60,
+    ]),
+  });
+  const [settings, setSettings] = useState<TimerSettings>(queryState);
 
   const timer = useTimer(settings);
 
-  const handleTimeSet = (minutes: number, alerts: number[]) => {
-    const newSettings = { totalMinutes: minutes, alerts };
+  const handleTimeSet = <K extends keyof TimerSettings>(
+    key: K,
+    value: TimerSettings[K]
+  ) => {
+    const newSettings = { ...queryState, [key]: value };
     setSettings(newSettings);
-    setSavedSettings(newSettings);
+    setQueryState(newSettings);
   };
 
   const handleReset = () => {
@@ -63,7 +67,7 @@ export default function Home() {
           <>
             <TimerDisplay
               remainingSeconds={timer.remainingSeconds}
-              totalSeconds={settings.totalMinutes * 60}
+              totalSeconds={settings.totalSeconds}
               isRunning={timer.isRunning}
               isPaused={timer.isPaused}
               alerts={settings.alerts}
@@ -78,6 +82,7 @@ export default function Home() {
               onReset={handleReset}
             />
             <TimeSettings
+              queryState={queryState}
               onTimeSet={handleTimeSet}
               disabled={timer.isRunning}
             />

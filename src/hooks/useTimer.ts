@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 export interface TimerSettings {
-  totalMinutes: number;
+  totalSeconds: number;
   alerts: number[]; // アラートを鳴らす残り時間（分）
 }
 
@@ -17,7 +17,7 @@ export function useTimer(settings: TimerSettings) {
   const [state, setState] = useState<TimerState>({
     isRunning: false,
     isPaused: false,
-    remainingSeconds: settings.totalMinutes * 60,
+    remainingSeconds: settings.totalSeconds,
     elapsedSeconds: 0,
     alertsTriggered: new Set(),
   });
@@ -30,20 +30,19 @@ export function useTimer(settings: TimerSettings) {
       interval = setInterval(() => {
         setState((prev) => {
           const newElapsed = prev.elapsedSeconds + 1;
-          const newRemaining = Math.max(
+          const remainingSeconds = Math.max(
             0,
-            settings.totalMinutes * 60 - newElapsed
+            settings.totalSeconds - newElapsed
           );
 
           // アラートチェック
-          const remainingMinutes = Math.ceil(newRemaining / 60);
           const newAlertsTriggered = new Set(prev.alertsTriggered);
 
           for (const alertMinute of settings.alerts) {
             if (
-              remainingMinutes <= alertMinute &&
+              remainingSeconds <= alertMinute &&
               !prev.alertsTriggered.has(alertMinute) &&
-              newRemaining > 0
+              remainingSeconds > 0
             ) {
               newAlertsTriggered.add(alertMinute);
               // アラート音を鳴らす
@@ -52,7 +51,7 @@ export function useTimer(settings: TimerSettings) {
           }
 
           // タイマー終了チェック
-          if (newRemaining === 0) {
+          if (remainingSeconds === 0) {
             playAlert();
             return {
               ...prev,
@@ -66,7 +65,7 @@ export function useTimer(settings: TimerSettings) {
           return {
             ...prev,
             elapsedSeconds: newElapsed,
-            remainingSeconds: newRemaining,
+            remainingSeconds,
             alertsTriggered: newAlertsTriggered,
           };
         });
@@ -96,11 +95,11 @@ export function useTimer(settings: TimerSettings) {
     setState({
       isRunning: false,
       isPaused: false,
-      remainingSeconds: settings.totalMinutes * 60,
+      remainingSeconds: settings.totalSeconds,
       elapsedSeconds: 0,
       alertsTriggered: new Set(),
     });
-  }, [settings.totalMinutes]);
+  }, [settings.totalSeconds]);
 
   return {
     ...state,

@@ -1,27 +1,30 @@
 import AlertConfig from "@/components/AlertConfig";
 import TimeInput from "@/components/TimeInput";
-import { useCallback, useState } from "react";
+import { TimerSettings } from "@/hooks/useTimer";
+import { useCallback } from "react";
 
 interface TimeSettingsProps {
-  onTimeSet: (minutes: number, alerts: number[]) => void;
+  queryState: TimerSettings;
+  onTimeSet: <K extends keyof TimerSettings>(
+    key: K,
+    value: TimerSettings[K]
+  ) => void;
   disabled: boolean;
 }
 
-export function TimeSettings({ onTimeSet, disabled }: TimeSettingsProps) {
-  const [minutes, setMinutes] = useState(20);
-  const [seconds, setSeconds] = useState(0);
-  const [alert1Minutes, setAlert1Minutes] = useState(10);
-  const [alert1Seconds, setAlert1Seconds] = useState(0);
-  const [alert2Minutes, setAlert2Minutes] = useState(5);
-  const [alert2Seconds, setAlert2Seconds] = useState(0);
-  const [alert3Minutes, setAlert3Minutes] = useState(1);
-  const [alert3Seconds, setAlert3Seconds] = useState(0);
+export function TimeSettings({
+  queryState: { totalSeconds, alerts },
+  onTimeSet,
+  disabled,
+}: TimeSettingsProps) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
 
-  // ===
-  // State for alerts
-  const [alerts, setAlerts] = useState<{ time: number; triggered: boolean }[]>(
-    []
-  );
+  if (totalSeconds <= 0) {
+    alert("⚠️ 時間は1秒以上設定してください");
+    return;
+  }
+
   const addAlert = useCallback(() => {
     if (alerts.length >= 3) return;
 
@@ -30,62 +33,54 @@ export function TimeSettings({ onTimeSet, disabled }: TimeSettingsProps) {
     // Default to halfway point if no alerts yet, otherwise after the last alert
     let defaultTime = Math.floor(totalSeconds / 2);
     if (alerts.length > 0) {
-      const lastAlertTime = Math.max(...alerts.map((a) => a.time));
+      const lastAlertTime = Math.max(...alerts);
       defaultTime = Math.min(totalSeconds, lastAlertTime + 60);
     }
 
-    setAlerts((prevAlerts) => [
-      ...prevAlerts,
-      {
-        time: defaultTime,
-        triggered: false,
-      },
-    ]);
-  }, [alerts, minutes, seconds]);
-
-  // Remove an alert
-  const removeAlert = useCallback((time: number) => {
-    setAlerts((prevAlerts) =>
-      prevAlerts.filter((alert) => alert.time !== time)
-    );
-  }, []);
-
-  // Update an alert
-  const updateAlert = useCallback((time: number, newTime: number) => {
-    setAlerts((prevAlerts) =>
-      prevAlerts.map((alert) =>
-        alert.time === time ? { ...alert, time: newTime } : alert
-      )
-    );
-  }, []);
-
-  // ===
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const totalMinutes = minutes + seconds / 60;
-    if (totalMinutes <= 0) {
-      alert("⚠️ 時間は1秒以上設定してください");
-      return;
-    }
-
-    const alert1Total = alert1Minutes + alert1Seconds / 60;
-    const alert2Total = alert2Minutes + alert2Seconds / 60;
-    const alert3Total = alert3Minutes + alert3Seconds / 60;
-
-    const alerts = [alert1Total, alert2Total, alert3Total]
-      .filter((alert) => alert > 0 && alert < totalMinutes)
+    const newAlerts = [...alerts, defaultTime];
+    const _newAlerts = newAlerts
+      .filter((alert) => alert > 0 && alert < totalSeconds)
       .sort((a, b) => b - a); // 降順でソート
 
     // アラート時間が重複していないかチェック
-    const uniqueAlerts = [...new Set(alerts)];
-    if (alerts.length !== uniqueAlerts.length) {
-      alert("⚠️ アラート時間が重複しています。異なる時間を設定してください。");
-      return;
-    }
+    const uniqueAlerts = [...new Set(_newAlerts)];
 
-    onTimeSet(totalMinutes, alerts);
-  };
+    onTimeSet("alerts", uniqueAlerts);
+  }, [alerts, minutes, seconds, onTimeSet]);
+
+  // Remove an alert
+  const removeAlert = useCallback(
+    (time: number) => {
+      const newAlerts = alerts.filter((alertTime) => alertTime !== time);
+      const _newAlerts = newAlerts
+        .filter((alert) => alert > 0 && alert < totalSeconds)
+        .sort((a, b) => b - a); // 降順でソート
+
+      // アラート時間が重複していないかチェック
+      const uniqueAlerts = [...new Set(_newAlerts)];
+
+      onTimeSet("alerts", uniqueAlerts);
+    },
+    [alerts, totalSeconds, onTimeSet]
+  );
+
+  // Update an alert
+  const updateAlert = useCallback(
+    (time: number, newTime: number) => {
+      const newAlerts = alerts.map((alertTime) =>
+        alertTime === time ? newTime : alertTime
+      );
+      const _newAlerts = newAlerts
+        .filter((alert) => alert > 0 && alert < totalSeconds)
+        .sort((a, b) => b - a); // 降順でソート
+
+      // アラート時間が重複していないかチェック
+      const uniqueAlerts = [...new Set(_newAlerts)];
+
+      onTimeSet("alerts", uniqueAlerts);
+    },
+    [alerts, totalSeconds, onTimeSet]
+  );
 
   const presetTimes = [
     { label: "10分", minutes: 10, seconds: 0 },
@@ -95,33 +90,22 @@ export function TimeSettings({ onTimeSet, disabled }: TimeSettingsProps) {
   ];
 
   const handlePresetClick = (presetMinutes: number, presetSeconds: number) => {
-    setMinutes(presetMinutes);
-    setSeconds(presetSeconds);
+    const totalSeconds = presetMinutes * 60 + presetSeconds;
 
-    // プリセット時間に応じてアラートを自動設定
-    const totalTime = presetMinutes + presetSeconds / 60;
-    if (totalTime <= 5) {
-      setAlert1Minutes(2);
-      setAlert1Seconds(0);
-      setAlert2Minutes(1);
-      setAlert2Seconds(0);
-      setAlert3Minutes(0);
-      setAlert3Seconds(30);
-    } else if (totalTime <= 15) {
-      setAlert1Minutes(Math.floor(totalTime / 2));
-      setAlert1Seconds(0);
-      setAlert2Minutes(Math.floor(totalTime / 4));
-      setAlert2Seconds(0);
-      setAlert3Minutes(1);
-      setAlert3Seconds(0);
-    } else {
-      setAlert1Minutes(10);
-      setAlert1Seconds(0);
-      setAlert2Minutes(5);
-      setAlert2Seconds(0);
-      setAlert3Minutes(1);
-      setAlert3Seconds(0);
+    if (totalSeconds <= 0) {
+      alert("⚠️ 時間は1秒以上設定してください");
+      return;
     }
+
+    // アラートを自動設定
+    const newAlerts = [
+      totalSeconds - 10 * 60,
+      totalSeconds - 5 * 60,
+      totalSeconds - 1 * 60,
+    ].filter((alert) => alert > 0 && alert < totalSeconds);
+
+    onTimeSet("totalSeconds", totalSeconds);
+    onTimeSet("alerts", newAlerts);
   };
 
   return (
@@ -130,7 +114,7 @@ export function TimeSettings({ onTimeSet, disabled }: TimeSettingsProps) {
         プレゼンテーション時間設定
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form className="space-y-6">
         {/* 時間設定 */}
         <div className="bg-blue-50 rounded-lg p-6 border border-blue-200 text-gray-400">
           <h3 className="text-lg font-semibold mb-2 text-gray-800 flex items-center">
@@ -142,8 +126,7 @@ export function TimeSettings({ onTimeSet, disabled }: TimeSettingsProps) {
               minutes={minutes}
               seconds={seconds}
               onTimeChange={(m, s) => {
-                setMinutes(m);
-                setSeconds(s);
+                onTimeSet("totalSeconds", m * 60 + s);
               }}
               disabled={disabled}
             />
@@ -184,17 +167,6 @@ export function TimeSettings({ onTimeSet, disabled }: TimeSettingsProps) {
             👆 ワンクリックで時間とアラートを自動設定
           </p>
         </div>
-
-        {/* 設定ボタン */}
-        {/* TODO: 入力したタイミングで同期 */}
-        <button
-          type="submit"
-          disabled={disabled || (minutes === 0 && seconds === 0)}
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500 transition-all duration-200 font-bold text-lg shadow-md hover:shadow-lg flex items-center justify-center space-x-2"
-        >
-          <span>🚀</span>
-          <span>タイマーを設定して開始</span>
-        </button>
       </form>
     </div>
   );

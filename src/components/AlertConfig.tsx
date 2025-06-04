@@ -1,13 +1,8 @@
 import TimeInput from "@/components/TimeInput";
 import React from "react";
 
-interface Alert {
-  time: number; // in seconds
-  triggered: boolean;
-}
-
 interface AlertConfigProps {
-  alerts: Alert[];
+  alerts: number[];
   onAddAlert: () => void;
   onRemoveAlert: (time: number) => void;
   onUpdateAlert: (time: number, newTime: number) => void;
@@ -22,12 +17,10 @@ const AlertConfig: React.FC<AlertConfigProps> = ({
   maxTime,
 }) => {
   const formatTimeFromSeconds = (seconds: number) => {
-    const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
 
     return {
-      hours: h,
       minutes: m,
       seconds: s,
     };
@@ -69,11 +62,11 @@ const AlertConfig: React.FC<AlertConfigProps> = ({
         </div>
       ) : (
         <ul className="grid gap-4">
-          {alerts.map((alert, key) => {
-            const { minutes, seconds } = formatTimeFromSeconds(alert.time);
+          {alerts.map((alertTime, key) => {
+            const { minutes, seconds } = formatTimeFromSeconds(alertTime);
             return (
               <li
-                key={alert.time}
+                key={alertTime}
                 className="bg-white p-4 rounded-lg border border-yellow-300 flex justify-between items-center"
               >
                 <span className="text-sm font-medium text-gray-700">
@@ -84,18 +77,17 @@ const AlertConfig: React.FC<AlertConfigProps> = ({
                     minutes={minutes}
                     seconds={seconds}
                     onTimeChange={(m, s) => {
-                      const newTime = 3600 + m * 60 + s;
+                      const newTime = m * 60 + s;
                       if (newTime <= maxTime) {
-                        onUpdateAlert(alert.time, newTime);
+                        onUpdateAlert(alertTime, newTime);
                       }
                     }}
-                    disabled={alert.triggered}
                   />
                   <span className="text-ms text-gray-500">前</span>
                 </div>
                 <button
                   type="button"
-                  onClick={() => onRemoveAlert(alert.time)}
+                  onClick={() => onRemoveAlert(alertTime)}
                   className="text-gray-400 hover:text-red-500 transition-colors"
                   aria-label="Remove alert"
                 >
