@@ -1,0 +1,24 @@
+# EXAMPLE USAGE:
+#
+#   Refer for explanation to following link:
+#   https://lefthook.dev/configuration/
+#
+pre-push:
+  jobs:
+    - name: packages audit
+      tags:
+        - frontend
+        - security
+      run: npm audit
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: lint-check
+      glob: "src/**/*.{ts,tsx}"
+      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      stage_fixed: true
+
+    - name: type-check
+      glob: "src/**/*.{ts,tsx}"
+      run: npm run type-check

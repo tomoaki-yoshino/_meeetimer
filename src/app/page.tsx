@@ -1,19 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { TimerDisplay } from "@/components/TimerDisplay";
 import { TimeInput } from "@/components/TimeInput";
 import { TimerControls } from "@/components/TimerControls";
-import { useTimer, type TimerSettings } from "@/hooks/useTimer";
+import { TimerDisplay } from "@/components/TimerDisplay";
 import { useFullscreen } from "@/hooks/useFullscreen";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { type TimerSettings, useTimer } from "@/hooks/useTimer";
+import { useState } from "react";
 
 export default function Home() {
-  const [savedSettings, setSavedSettings] = useLocalStorage<TimerSettings>("timerSettings", {
-    totalMinutes: 20,
-    alerts: [10, 5, 1],
-  });
+  const [savedSettings, setSavedSettings] = useLocalStorage<TimerSettings>(
+    "timerSettings",
+    {
+      totalMinutes: 20,
+      alerts: [10, 5, 1],
+    }
+  );
   const [settings, setSettings] = useState<TimerSettings>(savedSettings);
   const [isSetupMode, setIsSetupMode] = useState(true);
 
@@ -51,25 +54,29 @@ export default function Home() {
   });
 
   return (
-    <div className={`min-h-screen transition-all duration-300 ${
-      isFullscreen 
-        ? "bg-black text-white" 
-        : "bg-gradient-to-br from-blue-50 to-indigo-100"
-    } p-4`}>
+    <div
+      className={`min-h-screen transition-all duration-300 ${
+        isFullscreen
+          ? "bg-black text-white"
+          : "bg-gradient-to-br from-blue-50 to-indigo-100"
+      } p-4`}
+    >
       <div className="max-w-4xl mx-auto">
         {/* ヘッダー */}
-        <header className={`text-center transition-all duration-300 ${
-          isFullscreen ? "py-4" : "py-8"
-        }`}>
-          <h1 className={`font-bold mb-2 transition-all duration-300 ${
-            isFullscreen ? "text-6xl text-white" : "text-4xl text-gray-800"
-          }`}>
+        <header
+          className={`text-center transition-all duration-300 ${
+            isFullscreen ? "py-4" : "py-8"
+          }`}
+        >
+          <h1
+            className={`font-bold mb-2 transition-all duration-300 ${
+              isFullscreen ? "text-6xl text-white" : "text-4xl text-gray-800"
+            }`}
+          >
             🎯 Meeetimer
           </h1>
           {!isFullscreen && (
-            <p className="text-gray-600">
-              プレゼンテーション時間管理ツール
-            </p>
+            <p className="text-gray-600">プレゼンテーション時間管理ツール</p>
           )}
         </header>
 
@@ -77,10 +84,7 @@ export default function Home() {
         <main className="space-y-8">
           {isSetupMode ? (
             /* 設定モード */
-            <TimeInput
-              onTimeSet={handleTimeSet}
-              disabled={timer.isRunning}
-            />
+            <TimeInput onTimeSet={handleTimeSet} disabled={timer.isRunning} />
           ) : (
             /* タイマーモード */
             <>
@@ -136,7 +140,7 @@ export default function Home() {
         {/* フッター */}
         {!isFullscreen && (
           <footer className="text-center py-8 text-gray-500 text-sm">
-            <p>© 2024 Meeetimer - プレゼンテーション時間を効率的に管理</p>
+            <p>© 2025 Meeetimer - プレゼンテーション時間を効率的に管理</p>
           </footer>
         )}
       </div>

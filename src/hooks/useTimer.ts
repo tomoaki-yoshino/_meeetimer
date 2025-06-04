@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface TimerSettings {
   totalMinutes: number;
@@ -19,7 +19,7 @@ export function useTimer(settings: TimerSettings) {
     isPaused: false,
     remainingSeconds: settings.totalMinutes * 60,
     elapsedSeconds: 0,
-    alertsTriggered: new Set()
+    alertsTriggered: new Set(),
   });
 
   // タイマーのメインロジック
@@ -39,7 +39,7 @@ export function useTimer(settings: TimerSettings) {
           const remainingMinutes = Math.ceil(newRemaining / 60);
           const newAlertsTriggered = new Set(prev.alertsTriggered);
 
-          settings.alerts.forEach((alertMinute) => {
+          for (const alertMinute of settings.alerts) {
             if (
               remainingMinutes <= alertMinute &&
               !prev.alertsTriggered.has(alertMinute) &&
@@ -49,7 +49,7 @@ export function useTimer(settings: TimerSettings) {
               // アラート音を鳴らす
               playAlert();
             }
-          });
+          }
 
           // タイマー終了チェック
           if (newRemaining === 0) {
@@ -59,7 +59,7 @@ export function useTimer(settings: TimerSettings) {
               isRunning: false,
               elapsedSeconds: newElapsed,
               remainingSeconds: 0,
-              alertsTriggered: newAlertsTriggered
+              alertsTriggered: newAlertsTriggered,
             };
           }
 
@@ -67,7 +67,7 @@ export function useTimer(settings: TimerSettings) {
             ...prev,
             elapsedSeconds: newElapsed,
             remainingSeconds: newRemaining,
-            alertsTriggered: newAlertsTriggered
+            alertsTriggered: newAlertsTriggered,
           };
         });
       }, 1000);
@@ -98,7 +98,7 @@ export function useTimer(settings: TimerSettings) {
       isPaused: false,
       remainingSeconds: settings.totalMinutes * 60,
       elapsedSeconds: 0,
-      alertsTriggered: new Set()
+      alertsTriggered: new Set(),
     });
   }, [settings.totalMinutes]);
 
@@ -107,15 +107,16 @@ export function useTimer(settings: TimerSettings) {
     start,
     pause,
     resume,
-    reset
+    reset,
   };
 }
 
 function playAlert() {
   // Web Audio APIを使用してアラート音を再生
   try {
-    const audioContext = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
+    const audioContext = new (
+      window.AudioContext || (window as any).webkitAudioContext
+    )();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
